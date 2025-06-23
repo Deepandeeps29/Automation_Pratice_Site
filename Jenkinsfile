@@ -1,17 +1,7 @@
 pipeline {
     agent any
 
-    environment {
-        REPORT_FILE = "report.html"
-    }
-
     stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Deepandeeps29/Automation_Pratice_Site.git'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 bat 'pip install -r requirements.txt'
@@ -26,7 +16,7 @@ pipeline {
 
         stage('Archive Report') {
             steps {
-                archiveArtifacts artifacts: 'report.html', onlyIfSuccessful: false
+                archiveArtifacts artifacts: 'report.html', fingerprint: true
                 publishHTML([
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
@@ -41,12 +31,13 @@ pipeline {
 
     post {
         always {
-            emailext (
-                subject: "Selenium Login Test Report: ${currentBuild.currentResult}",
-                body: """<p>Build Result: ${currentBuild.currentResult}</p>
-                         <p>View Report: <a href="${BUILD_URL}HTML_20Report/">Click here</a></p>""",
-                attachLog: true,
-                attachmentsPattern: 'report.html',
+            emailext(
+                subject: "Jenkins Automation Test Report - ${currentBuild.currentResult}",
+                body: """<p>Hi Team,</p>
+                         <p>The Jenkins job <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b> has completed with status: <b>${currentBuild.currentResult}</b>.</p>
+                         <p><a href="${env.BUILD_URL}Login_20Test_20Report">Click here to view the HTML Test Report</a></p>
+                         <br><p>Thanks,<br>Jenkins</p>""",
+                mimeType: 'text/html',
                 to: 'deepanvinayagam1411@gmail.com'
             )
         }
