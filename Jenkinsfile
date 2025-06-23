@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 bat 'pip install -r requirements.txt'
@@ -14,35 +20,10 @@ pipeline {
             }
         }
 
-        stage('Archive Report') {
+        stage('Send Email Report via Python') {
             steps {
-                archiveArtifacts artifacts: 'report.html', fingerprint: true
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: '.',
-                    reportFiles: 'report.html',
-                    reportName: 'Login Test Report'
-                ])
+                bat 'python send_email.py'
             }
         }
     }
-
-    post {
-        always {
-            emailext (
-                subject: "Test Report - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
-                body: """
-                    <p>Test has completed with result: ${currentBuild.currentResult}</p>
-                    <p><a href="${BUILD_URL}HTML_20Report/">Click here to view report</a></p>
-                """,
-                attachLog: true,
-                attachmentsPattern: 'report.html',
-                mimeType: 'text/html',
-                to: 'deepanvinayagam1411@gmail.com'
-        )
-    }
-}
-
 }
