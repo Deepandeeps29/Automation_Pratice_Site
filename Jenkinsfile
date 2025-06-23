@@ -40,7 +40,7 @@ pipeline {
                 attachLog: true,
                 attachmentsPattern: 'report.html',
                 mimeType: 'text/html',
-                to: 'your_email@gmail.com'
+                to: 'deepanvinayagam1411@gmail.com'
         )
     }
 }
