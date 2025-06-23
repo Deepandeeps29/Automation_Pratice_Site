@@ -31,15 +31,18 @@ pipeline {
 
     post {
         always {
-            emailext(
-                subject: "Jenkins Automation Test Report - ${currentBuild.currentResult}",
-                body: """<p>Hi Team,</p>
-                         <p>The Jenkins job <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b> has completed with status: <b>${currentBuild.currentResult}</b>.</p>
-                         <p><a href="${env.BUILD_URL}Login_20Test_20Report">Click here to view the HTML Test Report</a></p>
-                         <br><p>Thanks,<br>Jenkins</p>""",
+            emailext (
+                subject: "Test Report - ${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                body: """
+                    <p>Test has completed with result: ${currentBuild.currentResult}</p>
+                    <p><a href="${BUILD_URL}HTML_20Report/">Click here to view report</a></p>
+                """,
+                attachLog: true,
+                attachmentsPattern: 'report.html',
                 mimeType: 'text/html',
-                to: 'deepanvinayagam1411@gmail.com'
-            )
-        }
+                to: 'your_email@gmail.com'
+        )
     }
+}
+
 }
