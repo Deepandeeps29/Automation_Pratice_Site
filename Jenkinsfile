@@ -4,7 +4,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
+                git credentialsId: 'github-token',
+                url: 'https://github.com/Deepandeeps29/Automation_Pratice_Site.git',
+                branch: 'main'
             }
         }
 
